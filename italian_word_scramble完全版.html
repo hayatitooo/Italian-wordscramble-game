@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ITALIAN WORD SCRAMBLE</title>
+  <style>
+body {
+  font-family: "Arial", sans-serif;
+  text-align: center;
+  background-color: #e0f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* タイトル画面 */
+#title-screen {
+  background-color: #cce8ff;
+  text-align: center;
+  min-height: 100vh;
+  padding: 40px 20px 60px 20px;
+}
+
+#main-title {
+  font-size: 2.5rem;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: #004d40;
+}
+
+.ita {
+  font-style: italic;
+  color: #00796b;
+}
+
+.category-container {
+  margin-top: 20px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.category-section {
+  margin-bottom: 30px;
+}
+
+.category-section h3 {
+  color: #004d40;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.category-btn {
+  background-color: #ffeb3b;
+  border: 2px solid #fbc02d;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.category-btn:hover {
+  background-color: #fdd835;
+}
+
+/* ゲーム画面 */
+#game-screen {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #cce8ff;
+  min-height: 100vh;
+  position: relative;
+}
+
+.game-title {
+  font-size: 2.2em;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #004d40;
+}
+
+/* カテゴリードロップダウン */
+.dropdown {
+  margin: 0 auto 25px auto;
+  position: relative;
+}
+
+#category-list-btn {
+  background-color: #ffeb3b;
+  border: 2px solid #fbc02d;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#category-list-btn:hover {
+  background-color: #fdd835;
+}
+
+#category-dropdown {
+  display: none;
+  flex-direction: column;
+  background: white;
+  border: 2px solid #fbc02d;
+  border-radius: 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  margin-top: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  max-height: 400px;
+  overflow-y: auto;
+  min-width: 300px;
+}
+
+#category-dropdown.show {
+  display: flex;
+}
+
+.dropdown-section {
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.dropdown-section:last-child {
+  border-bottom: none;
+}
+
+.dropdown-section-title {
+  font-weight: bold;
+  color: #004d40;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 0.9rem;
+  background-color: #f5f5f5;
+}
+
+.dropdown-item {
+  border: none;
+  background: none;
+  padding: 8px 12px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background-color: #fff9c4;
+}
+
+#category-name {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #00796b;
+}
+
+/* 問題リスト */
+#scramble-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px auto 80px auto;
+  max-width: 700px;
+  text-align: left;
+}
+
+#scramble-list li {
+  margin: 20px 0;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.scrambled {
+  font-weight: bold;
+  min-width: 200px;
+  color: #004d40;
+  font-size: 1.8rem;
+}
+
+.answer {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #00796b;
+  border-radius: 6px;
+  font-size: 1.3rem;
+}
+
+/* ヒントボタン */
+#hint-button {
+  background-color: springgreen;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin-left: 20px;
+}
+
+#hint-button:hover {
+  background-color: #00e676;
+}
+
+/* ヒントボックス */
+#hint-box {
+  width: 220px;
+  background: #fffbea;
+  border: 2px solid springgreen;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  margin-left: 20px;
+}
+
+#hint-box.hidden {
+  display: none;
+}
+
+#hint-box h3 {
+  font-size: 1em;
+  margin: 0 0 10px 0;
+  text-align: center;
+  color: #004d40;
+}
+
+#hint-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#hint-box li {
+  font-size: 0.95em;
+  margin-bottom: 5px;
+  padding: 4px;
+  background: white;
+  border-radius: 4px;
+}
+
+/* 下部コントロール */
+#controls {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+}
+
+#controls button {
+  background-color: springgreen;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+#controls button:hover {
+  background-color: #00e676;
+}
+
+/* スコア表示 */
+#score-area {
+  margin: 30px auto 120px auto;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #004d40;
+  padding: 15px;
+  background-color: #e0f7fa;
+  border-radius: 10px;
+  max-width: 600px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .game-content-wrapper {
+    flex-direction: column;
+  }
+  
+  #hint-button, #hint-box {
+    margin: 20px auto;
+  }
+  
+  #hint-box {
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  #main-title {
+    font-size: 1.8rem;
+  }
+  
+  .category-btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
+  </style>
+</head>
+<body>
+  <!-- タイトル画面 -->
+  <div id="title-screen">
+    <h1 id="main-title">🟩⬜🟥ITALIAN WORD SCRAMBLE🟩⬜🟥</h1>
+    <p>カテゴリを選んでね！<br><span class="ita">Per favore, scegli una categoria!</span></p>
+    <div class="category-container" id="category-container">
+      <!-- カテゴリーはJavaScriptで動的に生成 -->
+    </div>
+  </div>
+
+  <!-- ゲーム画面 -->
+  <div id="game-screen" class="hidden">
+    <h1 class="game-title">🟩⬜🟥ITALIAN WORD SCRAMBLE🟩⬜🟥</h1>
+    
+    <div class="dropdown">
+      <button id="category-list-btn">📂 カテゴリー一覧 / Categoria</button>
+      <div id="category-dropdown">
+        <!-- カテゴリードロップダウンもJavaScriptで動的に生成 -->
+      </div>
+    </div>
+
+    <h2 id="category-name"></h2>
+    
+    <div class="game-content-wrapper" style="display: flex; justify-content: center; gap: 30px; align-items: flex-start;">
+      <ul id="scramble-list"></ul>
+
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <button id="hint-button">💡 ヒント / Indizio</button>
+        <div id="hint-box" class="hidden">
+          <h3>💡 ヒント</h3>
+          <ul id="hint-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="controls">
+      <button id="next-button">➡ 採点 / Correggi</button>
+      <button id="home-button">🏠 ホームに戻る / Torna alla home page</button>
+    </div>
+
+    <div id="score-area"></div>
+  </div>
+
+  <script>
+// カテゴリー定義（50カテゴリー、各20単語 A1-A2レベル）
+const categories = {
+  "A. 生活・自然系": {
+    "animali": {
+      name: "動物",
+      emoji: "🐶",
+      words: ["gatto", "cane", "uccello", "mucca", "pecora", "topo", "cavallo", "asino", "pesce", "leone", "tigre", "elefante", "orso", "coniglio", "maiale", "pollo", "anatra", "gallo", "rana", "farfalla"]
+    },
+    "cibo": {
+      name: "食べ物",
+      emoji: "🍝",
+      words: ["pizza", "pasta", "pane", "formaggio", "riso", "pollo", "carne", "pesce", "insalata", "zucchero", "sale", "pepe", "olio", "burro", "uovo", "latte", "yogurt", "miele", "marmellata", "biscotto"]
+    },
+    "verdure": {
+      name: "野菜",
+      emoji: "🥕",
+      words: ["pomodoro", "patata", "carota", "cipolla", "aglio", "peperone", "melanzana", "zucchina", "spinaci", "lattuga", "cavolo", "broccoli", "cavolfiore", "cetriolo", "sedano", "ravanello", "piselli", "fagioli", "mais", "funghi"]
+    },
+    "frutta": {
+      name: "果物",
+      emoji: "🍎",
+      words: ["mela", "pera", "banana", "arancia", "limone", "fragola", "ciliegia", "uva", "pesca", "kiwi", "ananas", "melone", "anguria", "albicocca", "prugna", "fico", "cocco", "mango", "papaya", "pompelmo"]
+    },
+    "bevande": {
+      name: "飲み物",
+      emoji: "☕",
+      words: ["acqua", "latte", "caffè", "tè", "succo", "vino", "birra", "coca", "aranciata", "limonata", "cioccolata", "cappuccino", "espresso", "spremuta", "frullato", "smoothie", "aperitivo", "grappa", "liquore", "amaro"]
+    },
+    "tempo_natura": {
+      name: "天気・自然",
+      emoji: "☀️",
+      words: ["sole", "pioggia", "neve", "vento", "nuvola", "cielo", "tempesta", "tuono", "fulmine", "nebbia", "ghiaccio", "caldo", "freddo", "umido", "secco", "sereno", "nuvoloso", "piovoso", "ventoso", "nebbioso"]
+    },
+    "piante_fiori": {
+      name: "植物・花",
+      emoji: "🌸",
+      words: ["fiore", "rosa", "tulipano", "margherita", "girasole", "orchidea", "giglio", "garofano", "viola", "albero", "pianta", "foglia", "ramo", "radice", "seme", "erba", "muschio", "cespuglio", "prato", "giardino"]
+    },
+    "stagioni_tempo": {
+      name: "季節・時間",
+      emoji: "🍂",
+      words: ["primavera", "estate", "autunno", "inverno", "mattina", "pomeriggio", "sera", "notte", "giorno", "settimana", "mese", "anno", "oggi", "domani", "ieri", "ora", "minuto", "secondo", "momento", "periodo"]
+    },
+    "casa_mobili": {
+      name: "家・家具",
+      emoji: "🏠",
+      words: ["casa", "appartamento", "stanza", "cucina", "bagno", "camera", "salotto", "tavolo", "sedia", "letto", "armadio", "divano", "scrivania", "lampada", "porta", "finestra", "muro", "pavimento", "soffitto", "scala"]
+    },
+    "famiglia": {
+      name: "家庭・家族",
+      emoji: "👨‍👩‍👧‍👦",
+      words: ["famiglia", "padre", "madre", "figlio", "figlia", "fratello", "sorella", "nonno", "nonna", "zio", "zia", "cugino", "cugina", "marito", "moglie", "bambino", "bambina", "nipote", "genitori", "parenti"]
+    }
+  },
+  "B. 人・行動・性格": {
+    "rapporti": {
+      name: "人間関係",
+      emoji: "👥",
+      words: ["amico", "amica", "persona", "uomo", "donna", "ragazzo", "ragazza", "vicino", "vicina", "collega", "compagno", "compagna", "partner", "coppia", "fidanzato", "fidanzata", "conoscente", "estraneo", "nemico", "alleato"]
+    },
+    "emozioni": {
+      name: "感情・性格",
+      emoji: "😊",
+      words: ["felice", "triste", "arrabbiato", "calmo", "nervoso", "stanco", "energico", "allegro", "serio", "timido", "simpatico", "gentile", "cattivo", "buono", "intelligente", "stupido", "coraggioso", "pauroso", "generoso", "egoista"]
+    },
+    "salute_corpo": {
+      name: "健康・体の部位",
+      emoji: "💪",
+      words: ["testa", "occhio", "naso", "bocca", "orecchio", "dente", "collo", "spalla", "braccio", "mano", "dito", "petto", "pancia", "schiena", "gamba", "piede", "cuore", "polmone", "stomaco", "pelle"]
+    },
+    "professioni": {
+      name: "職業",
+      emoji: "👨‍💼",
+      words: ["dottore", "infermiere", "maestro", "professore", "studente", "avvocato", "ingegnere", "cuoco", "cameriere", "poliziotto", "pompiere", "postino", "commesso", "commessa", "impiegato", "meccanico", "elettricista", "idraulico", "artista", "musicista"]
+    },
+    "vestiti": {
+      name: "服・アクセサリー",
+      emoji: "👔",
+      words: ["vestito", "gonna", "pantaloni", "camicia", "maglietta", "maglione", "giacca", "cappotto", "scarpe", "stivali", "sandali", "calze", "cappello", "sciarpa", "guanti", "cintura", "cravatta", "borsa", "zaino", "occhiali"]
+    },
+    "azioni": {
+      name: "日常動作・家事",
+      emoji: "🧹",
+      words: ["fare", "andare", "venire", "mangiare", "bere", "dormire", "svegliare", "lavare", "pulire", "cucinare", "stirare", "spazzare", "comprare", "vendere", "aprire", "chiudere", "accendere", "spegnere", "telefonare", "guardare"]
+    },
+    "bellezza": {
+      name: "美容・身だしなみ",
+      emoji: "💄",
+      words: ["doccia", "bagno", "sapone", "shampoo", "pettine", "spazzola", "asciugamano", "specchio", "trucco", "profumo", "crema", "dentifricio", "spazzolino", "rasoio", "forbici", "phon", "smalto", "rossetto", "mascara", "fondotinta"]
+    },
+    "scuola": {
+      name: "教育・学校",
+      emoji: "📚",
+      words: ["scuola", "classe", "lezione", "esame", "compito", "libro", "quaderno", "penna", "matita", "gomma", "zaino", "banco", "lavagna", "gesso", "aula", "biblioteca", "mensa", "palestra", "cortile", "diploma"]
+    },
+    "hobby": {
+      name: "趣味・余暇",
+      emoji: "🎮",
+      words: ["hobby", "musica", "film", "cinema", "teatro", "lettura", "pittura", "disegno", "fotografia", "danza", "canto", "giardinaggio", "cucina", "videogiochi", "puzzle", "carte", "scacchi", "pesca", "campeggio", "escursione"]
+    },
+    "sport": {
+      name: "スポーツ",
+      emoji: "⚽",
+      words: ["calcio", "tennis", "basket", "nuoto", "corsa", "sci", "pallavolo", "golf", "ciclismo", "boxe", "atletica", "ginnastica", "yoga", "karate", "judo", "rugby", "baseball", "hockey", "pattinaggio", "arrampicata"]
+    }
+  },
+  "C. 場所・社会・交通": {
+    "edifici": {
+      name: "建物・施設",
+      emoji: "🏢",
+      words: ["edificio", "palazzo", "grattacielo", "casa", "villa", "castello", "chiesa", "cattedrale", "moschea", "tempio", "monastero", "museo", "biblioteca", "teatro", "cinema", "stadio", "centro", "mercato", "fabbrica", "officina"]
+    },
+    "luoghi": {
+      name: "場所・方向",
+      emoji: "🧭",
+      words: ["nord", "sud", "est", "ovest", "destra", "sinistra", "centro", "sopra", "sotto", "dentro", "fuori", "davanti", "dietro", "vicino", "lontano", "qui", "là", "qua", "laggiù", "lassù"]
+    },
+    "trasporti": {
+      name: "交通・乗り物",
+      emoji: "🚗",
+      words: ["auto", "macchina", "autobus", "treno", "metro", "tram", "taxi", "bicicletta", "moto", "aereo", "nave", "barca", "traghetto", "elicottero", "camion", "furgone", "ambulanza", "tir", "scooter", "monopattino"]
+    },
+    "viaggi": {
+      name: "旅行・観光",
+      emoji: "✈️",
+      words: ["viaggio", "vacanza", "turismo", "turista", "guida", "mappa", "biglietto", "prenotazione", "albergo", "hotel", "ostello", "camera", "bagaglio", "valigia", "zaino", "passaporto", "visto", "dogana", "aeroporto", "stazione"]
+    },
+    "geografia": {
+      name: "都市・国名・地理",
+      emoji: "🌍",
+      words: ["italia", "francia", "spagna", "germania", "giappone", "cina", "america", "canada", "brasile", "australia", "roma", "milano", "parigi", "londra", "berlino", "madrid", "tokyo", "pechino", "città", "paese"]
+    },
+    "natura_fenomeni": {
+      name: "自然現象・災害",
+      emoji: "🌋",
+      words: ["terremoto", "vulcano", "eruzione", "alluvione", "frana", "valanga", "incendio", "tornado", "uragano", "ciclone", "tsunami", "siccità", "inondazione", "temporale", "grandinata", "nevicata", "marea", "onda", "corrente", "vento"]
+    },
+    "lavoro": {
+      name: "職場・会社",
+      emoji: "💼",
+      words: ["lavoro", "ufficio", "azienda", "ditta", "impresa", "fabbrica", "negozio", "bottega", "studio", "scrivania", "computer", "stampante", "telefono", "riunione", "colloquio", "contratto", "stipendio", "salario", "pagamento", "scadenza"]
+    },
+    "politica": {
+      name: "政治・社会",
+      emoji: "🏛️",
+      words: ["governo", "ministro", "presidente", "sindaco", "parlamento", "senato", "deputato", "elezione", "voto", "legge", "costituzione", "democrazia", "repubblica", "stato", "nazione", "partito", "politica", "cittadino", "diritto", "dovere"]
+    },
+    "ambiente": {
+      name: "環境・地球",
+      emoji: "🌱",
+      words: ["ambiente", "natura", "terra", "pianeta", "mondo", "ecosistema", "foresta", "bosco", "selva", "giungla", "deserto", "montagna", "collina", "valle", "pianura", "fiume", "lago", "mare", "oceano", "isola"]
+    },
+    "cultura": {
+      name: "文化・宗教",
+      emoji: "⛪",
+      words: ["cultura", "tradizione", "costume", "usanza", "religione", "fede", "dio", "chiesa", "prete", "papa", "santo", "preghiera", "messa", "battesimo", "matrimonio", "funerale", "festa", "celebrazione", "rito", "cerimonia"]
+    }
+  },
+  "D. 言葉・文法・抽象語": {
+    "verbi": {
+      name: "動詞",
+      emoji: "🏃",
+      words: ["essere", "avere", "fare", "andare", "venire", "dire", "dare", "sapere", "volere", "potere", "dovere", "vedere", "sentire", "parlare", "mangiare", "bere", "dormire", "lavorare", "studiare", "giocare"]
+    },
+    "sostantivi": {
+      name: "名詞",
+      emoji: "📦",
+      words: ["cosa", "oggetto", "nome", "parola", "frase", "testo", "storia", "racconto", "idea", "pensiero", "problema", "soluzione", "domanda", "risposta", "esempio", "caso", "fatto", "evento", "situazione", "occasione"]
+    },
+    "aggettivi": {
+      name: "形容詞",
+      emoji: "🎨",
+      words: ["grande", "piccolo", "alto", "basso", "lungo", "corto", "largo", "stretto", "nuovo", "vecchio", "giovane", "bello", "brutto", "buono", "cattivo", "facile", "difficile", "forte", "debole", "ricco"]
+    },
+    "avverbi": {
+      name: "副詞",
+      emoji: "⚡",
+      words: ["molto", "poco", "tanto", "troppo", "abbastanza", "quasi", "sempre", "mai", "spesso", "raramente", "ancora", "già", "subito", "presto", "tardi", "bene", "male", "meglio", "peggio", "insieme"]
+    },
+    "preposizioni": {
+      name: "前置詞",
+      emoji: "🔗",
+      words: ["di", "a", "da", "in", "con", "su", "per", "tra", "fra", "sopra", "sotto", "dentro", "fuori", "davanti", "dietro", "vicino", "lontano", "verso", "fino", "oltre"]
+    },
+    "congiunzioni": {
+      name: "接続詞",
+      emoji: "➕",
+      words: ["e", "o", "ma", "però", "quindi", "perché", "se", "quando", "mentre", "come", "anche", "né", "oppure", "invece", "infatti", "allora", "dunque", "cioè", "ovvero", "anzi"]
+    },
+    "pronomi": {
+      name: "代名詞",
+      emoji: "👤",
+      words: ["io", "tu", "lui", "lei", "noi", "voi", "loro", "questo", "quello", "qualcosa", "qualcuno", "niente", "nessuno", "tutto", "tutti", "altro", "stesso", "tale", "chi", "che"]
+    },
+    "articoli": {
+      name: "冠詞",
+      emoji: "📝",
+      words: ["il", "lo", "la", "i", "gli", "le", "un", "uno", "una", "del", "dello", "della", "dei", "degli", "delle", "al", "allo", "alla", "ai", "agli"]
+    },
+    "interrogativi": {
+      name: "疑問詞",
+      emoji: "❓",
+      words: ["chi", "che", "cosa", "quale", "quanto", "quanta", "quanti", "quante", "quando", "dove", "come", "perché", "quanto", "dove", "quale", "cosa", "come", "quando", "perché", "dove"]
+    },
+    "interiezioni": {
+      name: "感嘆詞・あいづち",
+      emoji: "💬",
+      words: ["ah", "oh", "eh", "ahi", "ehi", "boh", "mah", "beh", "uffa", "accidenti", "evviva", "bravo", "dai", "su", "via", "ecco", "allora", "insomma", "caspita", "cavolo"]
+    }
+  },
+  "E. 生活スキル・実用": {
+    "shopping": {
+      name: "買い物・お金",
+      emoji: "💶",
+      words: ["soldi", "denaro", "euro", "centesimo", "moneta", "banconota", "prezzo", "costo", "sconto", "offerta", "saldo", "pagamento", "cassa", "resto", "carta", "bancomat", "credito", "debito", "spesa", "acquisto"]
+    },
+    "ristorante": {
+      name: "レストラン・料理",
+      emoji: "🍽️",
+      words: ["ristorante", "trattoria", "osteria", "pizzeria", "bar", "caffè", "tavolo", "sedia", "menu", "piatto", "antipasto", "primo", "secondo", "contorno", "dolce", "dessert", "conto", "cameriere", "cameriera", "mancia"]
+    },
+    "ospedale": {
+      name: "健康・病院",
+      emoji: "🏥",
+      words: ["ospedale", "clinica", "ambulatorio", "dottore", "medico", "infermiere", "paziente", "malato", "malattia", "febbre", "tosse", "raffreddore", "influenza", "dolore", "medicina", "pillola", "sciroppo", "iniezione", "ricetta", "cura"]
+    },
+    "clima": {
+      name: "天候・気候",
+      emoji: "🌡️",
+      words: ["clima", "tempo", "temperatura", "caldo", "freddo", "fresco", "mite", "umido", "secco", "soleggiato", "nuvoloso", "piovoso", "nevoso", "ventoso", "tempestoso", "sereno", "variabile", "stabile", "pressione", "meteo"]
+    },
+    "tecnologia": {
+      name: "仕事道具・テクノロジー",
+      emoji: "💻",
+      words: ["computer", "laptop", "tablet", "telefono", "cellulare", "smartphone", "tastiera", "mouse", "schermo", "monitor", "stampante", "scanner", "internet", "wifi", "email", "sito", "app", "programma", "software", "hardware"]
+    },
+    "abitazione": {
+      name: "住まい・不動産",
+      emoji: "🏘️",
+      words: ["casa", "appartamento", "villa", "attico", "monolocale", "bilocale", "stanza", "camera", "bagno", "cucina", "salotto", "terrazzo", "balcone", "giardino", "garage", "cantina", "soffitta", "piano", "ascensore", "portone"]
+    },
+    "media": {
+      name: "メディア・通信",
+      emoji: "📱",
+      words: ["televisione", "radio", "giornale", "rivista", "notizia", "informazione", "comunicazione", "messaggio", "lettera", "posta", "email", "sms", "chat", "telefono", "chiamata", "video", "foto", "immagine", "social", "rete"]
+    },
+    "eventi": {
+      name: "イベント・祭り",
+      emoji: "🎉",
+      words: ["festa", "compleanno", "matrimonio", "anniversario", "cerimonia", "celebrazione", "concerto", "spettacolo", "mostra", "esposizione", "fiera", "mercato", "sagra", "carnevale", "natale", "pasqua", "capodanno", "ferragosto", "evento", "incontro"]
+    },
+    "arte": {
+      name: "芸術・音楽",
+      emoji: "🎨",
+      words: ["arte", "pittura", "scultura", "disegno", "quadro", "statua", "museo", "galleria", "musica", "canzone", "melodia", "ritmo", "strumento", "pianoforte", "chitarra", "violino", "batteria", "orchestra", "coro", "concerto"]
+    },
+    "storia": {
+      name: "歴史・時代",
+      emoji: "📜",
+      words: ["storia", "epoca", "periodo", "secolo", "anno", "passato", "presente", "futuro", "antico", "moderno", "medievale", "romano", "greco", "rinascimento", "guerra", "pace", "rivoluzione", "impero", "regno", "repubblica"]
+    }
+  }
+};
+
+let currentCategory = "";
+let currentWords = [];
+let scrambledWords = [];
+
+// 要素取得
+const titleScreen = document.getElementById("title-screen");
+const gameScreen = document.getElementById("game-screen");
+const categoryName = document.getElementById("category-name");
+const scrambleList = document.getElementById("scramble-list");
+const scoreArea = document.getElementById("score-area");
+const hintButton = document.getElementById("hint-button");
+const hintBox = document.getElementById("hint-box");
+const hintList = document.getElementById("hint-list");
+const categoryDropdown = document.getElementById("category-dropdown");
+
+// カテゴリーボタンを動的に生成
+function generateCategoryButtons() {
+  const container = document.getElementById("category-container");
+  
+  for (const [sectionName, sectionCategories] of Object.entries(categories)) {
+    const section = document.createElement("div");
+    section.className = "category-section";
+    
+    const heading = document.createElement("h3");
+    heading.textContent = sectionName;
+    section.appendChild(heading);
+    
+    for (const [categoryId, categoryData] of Object.entries(sectionCategories)) {
+      const button = document.createElement("button");
+      button.className = "category-btn";
+      button.dataset.category = categoryId;
+      button.textContent = `${categoryData.emoji} ${categoryData.name}`;
+      section.appendChild(button);
+    }
+    
+    container.appendChild(section);
+  }
+}
+
+// カテゴリードロップダウンを動的に生成
+function generateCategoryDropdown() {
+  const dropdown = document.getElementById("category-dropdown");
+  
+  for (const [sectionName, sectionCategories] of Object.entries(categories)) {
+    const section = document.createElement("div");
+    section.className = "dropdown-section";
+    
+    const title = document.createElement("div");
+    title.className = "dropdown-section-title";
+    title.textContent = sectionName;
+    section.appendChild(title);
+    
+    for (const [categoryId, categoryData] of Object.entries(sectionCategories)) {
+      const button = document.createElement("button");
+      button.className = "dropdown-item";
+      button.dataset.category = categoryId;
+      button.textContent = `${categoryData.emoji} ${categoryData.name}`;
+      section.appendChild(button);
+    }
+    
+    dropdown.appendChild(section);
+  }
+}
+
+// 初期化
+generateCategoryButtons();
+generateCategoryDropdown();
+
+// カテゴリー情報を取得する関数
+function getCategoryInfo(categoryId) {
+  for (const section of Object.values(categories)) {
+    if (section[categoryId]) {
+      return section[categoryId];
+    }
+  }
+  return null;
+}
+
+// カテゴリーボタン動作（タイトル画面とドロップダウン両方）
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("category-btn") || e.target.classList.contains("dropdown-item")) {
+    const category = e.target.dataset.category;
+    startGame(category);
+    categoryDropdown.classList.remove("show");
+  }
+});
+
+// ホームボタン
+document.getElementById("home-button").addEventListener("click", () => {
+  gameScreen.classList.add("hidden");
+  titleScreen.classList.remove("hidden");
+  hintBox.classList.add("hidden");
+  categoryDropdown.classList.remove("show");
+});
+
+// カテゴリ一覧ボタン（トグル機能）
+document.getElementById("category-list-btn").addEventListener("click", () => {
+  categoryDropdown.classList.toggle("show");
+});
+
+// ゲーム開始
+function startGame(categoryId) {
+  const categoryInfo = getCategoryInfo(categoryId);
+  if (!categoryInfo) return;
+  
+  currentCategory = categoryId;
+  
+  // 20単語からランダムに10個選択
+  const allWords = [...categoryInfo.words];
+  currentWords = [];
+  for (let i = 0; i < 10; i++) {
+    const randomIndex = Math.floor(Math.random() * allWords.length);
+    currentWords.push(allWords[randomIndex]);
+    allWords.splice(randomIndex, 1);
+  }
+  
+  scrambledWords = currentWords.map(word => scramble(word));
+  
+  categoryName.textContent = `${categoryInfo.emoji} ${categoryInfo.name}`;
+  scrambleList.innerHTML = "";
+  scoreArea.innerHTML = "";
+  hintBox.classList.add("hidden");
+  
+  scrambledWords.forEach(scrambled => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span class="scrambled">${scrambled}</span>
+      <input type="text" class="answer">
+    `;
+    scrambleList.appendChild(li);
+  });
+  
+  titleScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+}
+
+// シャッフル関数
+function scramble(word) {
+  let shuffled = word;
+  // 元の単語と同じにならないように複数回試行
+  for (let i = 0; i < 10; i++) {
+    shuffled = word.split("").sort(() => Math.random() - 0.5).join("");
+    if (shuffled !== word) break;
+  }
+  return shuffled;
+}
+
+// 採点ボタン
+document.getElementById("next-button").addEventListener("click", () => {
+  const answers = document.querySelectorAll(".answer");
+  let score = 0;
+  
+  answers.forEach((input, index) => {
+    const correct = currentWords[index];
+    if (input.value.trim().toLowerCase() === correct.toLowerCase()) {
+      input.style.backgroundColor = "#b2ffb2";
+      score++;
+    } else {
+      input.style.backgroundColor = "#ffb2b2";
+    }
+  });
+  
+  // ポジティブなイタリア語のコメント（10種類）
+  const comments = [
+    "Fantastico! 素晴らしい！🌟",
+    "Ottimo lavoro! よく頑張ったね！👏",
+    "Continua così! その調子！💪",
+    "Molto bene! とてもいいよ！😊",
+    "Bravo! よくできました！🎯",
+    "Perfetto! 完璧！🎉",
+    "Eccellente! 素晴らしい！✨",
+    "Ben fatto! よくやった！🌈",
+    "Stai migliorando! 上達してるよ！🚀",
+    "Sei bravissimo! すごいね！⭐"
+  ];
+  
+  const randomComment = comments[Math.floor(Math.random() * comments.length)];
+  
+  scoreArea.textContent = `✅ ${score} / ${currentWords.length} 正解！ ${randomComment}`;
+  
+  scoreArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+// 💡ヒントボタン（トグル機能）
+hintButton.addEventListener("click", () => {
+  if (hintBox.classList.contains("hidden")) {
+    const shuffledHints = [...currentWords].sort(() => Math.random() - 0.5);
+    hintList.innerHTML = shuffledHints.map(w => `<li>${w}</li>`).join("");
+    hintBox.classList.remove("hidden");
+  } else {
+    hintBox.classList.add("hidden");
+  }
+});
+
+// 見た目を整える関数
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+  </script>
+</body>
+</html>
